@@ -1,3 +1,5 @@
+package gestor;
+
 import gestor.clases.*;
 
 import java.time.LocalDate;
@@ -37,3 +39,4 @@ public class GestorEventos {
         System.out.println("Hola soy el Registro");
     }
 }
+

@@ -1,3 +1,5 @@
+package gestor;
+
 import java.util.UUID;
 
 public class Validaciones {
@@ -52,7 +54,7 @@ public class Validaciones {
     public static String generarUUID() {
         //generar UUID aleatoria
         UUID uuid = UUID.randomUUID();
-        System.out.println("UUID generada: " + uuid);
+        System.out.println("UUID generada: " + uuid.toString());
         return uuid.toString();
     }
 }

@@ -1,3 +1,5 @@
+package gestor;
+
 import java.util.Scanner;
 
 public class Main {
@@ -11,8 +13,8 @@ public class Main {
             System.out.println("""
                                         
                                         
-                    ⋆｡ﾟ☁︎｡⋆｡ ﾟ☾ ﾟ｡⋆ DELECTARE MULTIEVENTOS ⋆｡ﾟ☁︎｡⋆｡ ﾟ☾ ﾟ｡⋆
-                    ꒷꒦꒷꒦꒷꒦꒷꒦꒷꒦꒷꒷꒦꒷꒦꒷꒦꒷꒦꒷꒦꒷꒷꒦꒷꒦꒷꒦꒷꒦꒷꒦꒷꒷꒦꒷꒦꒷꒦꒷꒦꒷꒦꒷
+                    ⋆｡ﾟ☁︎｡⋆｡DELECTARE MULTIEVENTOS ⋆｡ﾟ☁ ﾟ☾ ⋆
+                    ꒷꒦꒷꒦꒷꒦꒷꒦꒷꒦꒷꒷꒦꒷꒦꒷꒦꒷꒦꒷꒦꒷꒷꒦꒷꒦꒷꒦꒷꒦꒷꒦꒷꒷꒦꒷
                                         
                        1.  ‧₊˚✧[Iniciar Sesión]✧˚₊‧                  
                        2.  ‧₊˚✧[Registro]✧˚₊‧                   
@@ -22,6 +24,8 @@ public class Main {
                          Por favor, escoja una opción: ↓                                         
                       ╰────────────────────────────────┄ °❀                                                                                                              
                     """);
+
+            String uuid = Validaciones.generarUUID();
 
             opcion = sc.nextLine();
 
@@ -39,6 +43,7 @@ public class Main {
                     System.out.println("Introduzca una opción válida.");
             }
         } while (!opcion.equals("3"));
+
 
     }
 }

@@ -1,4 +1,4 @@
-package old;
+package gestor.old;
 
 import gestor.clases.*;
 import java.io.*;
