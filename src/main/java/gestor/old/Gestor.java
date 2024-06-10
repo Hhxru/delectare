@@ -20,6 +20,7 @@ public class Gestor {
         listadoUsuarios = new ArrayList<>();
         infoInicial();
 
+
         try {
             cargarUsuarios();
         } catch (IOException ex) {
@@ -200,4 +201,6 @@ public class Gestor {
         listadoUsuarios.add(nuevoAsistente);
         return nuevoAsistente;
     }
+
+
 }
