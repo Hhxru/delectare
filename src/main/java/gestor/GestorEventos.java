@@ -232,5 +232,21 @@ public class GestorEventos {
         }
 
 
+        // pedir nombre
+        while (true) {
+            System.out.println("Introduzca su nombre: ");
+            nombre = sc.nextLine();
+            if (Validaciones.validarNombre(nombre)) {
+                System.out.println("El nombre introducido es correcto.\n");
+                break;
+            } else {
+                System.err.println("Solo se pueden introducir letras, introdúzcalo de nuevo:");
+            }
+        }
+
+        
+
+
+
     }
 }
