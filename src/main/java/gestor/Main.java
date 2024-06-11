@@ -25,7 +25,6 @@ public class Main {
                       ╰────────────────────────────────┄ °❀                                                                                                              
                     """);
 
-            String uuid = Validaciones.generarUUID();
 
             opcion = sc.nextLine();
 
