@@ -205,7 +205,7 @@ public class GestorEventos {
     public void registro() {
         Scanner sc = new Scanner(System.in);
 
-        String nombre, apellido, email, password, telf, dni;
+        String nombre, apellido, email, password, confPassword, telf, dni;
         LocalDate fechaNacimiento;
         boolean salir = false;
 
@@ -244,8 +244,32 @@ public class GestorEventos {
             }
         }
 
-        
+        // pedir apellido
+        while (true) {
+            System.out.println("Introduzca su apellido: ");
+            apellido = sc.nextLine();
+            if (Validaciones.validarNombre(apellido)) {
+                System.out.println("El apellido introducido es correcto.\n");
+                break;
+            } else {
+                System.err.println("Solo se pueden introducir letras, introdúzcalo de nuevo:");
+            }
+        }
 
+        // pedir contraseña y pedir confirmacion (compara)
+        while (true) {
+            System.out.println("Introduzca su contraseña:");
+            password = sc.nextLine();
+
+            System.out.println("Confirmar contraseña:");
+            confPassword = sc.nextLine();
+
+            if (confPassword.equals(password)) {
+                break;
+            } else {
+                System.out.println("Las contraseñas no coinciden. Intentelo de nuevo...");
+            }
+        }
 
 
     }
