@@ -1,5 +1,6 @@
 package gestor;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -52,6 +53,8 @@ public class Validaciones {
              return mifecha;
          }catch (NumberFormatException e){
              System.err.println(e.getMessage());
+         }catch (DateTimeException d){
+             System.out.println(d.getMessage());
          }
         return null;
     }

@@ -54,6 +54,8 @@ public class GestorEventos {
         listadoUsuarios.add(usuario3);
         listadoUsuarios.add(admin1);
 
+        leerUsuarios();
+
         ArrayList<Asistente> asistentes = new ArrayList<>();
         Evento evento1 = new Evento("Evento1", "Pepe", listadoSalas[0], LocalDate.of(2024, 6, 15), LocalTime.of(20, 0), 50.0, "Concierto", 25, asistentes);
         Evento evento2 = new Evento("Evento2", "Jose", listadoSalas[1], LocalDate.of(2024, 6, 20), LocalTime.of(19, 0), 40.0, "Teatro", 25, asistentes);
@@ -61,30 +63,42 @@ public class GestorEventos {
         listadoEventos.add(evento1);
         listadoEventos.add(evento2);
     }
-    public void leerUsuarios() throws IOException {
+    public void leerUsuarios() {
+        FileInputStream fis = null;
+        ObjectInputStream ois = null;
         try {
-            fis=new FileInputStream("src/data/usuarios.dat");
-            ois=new ObjectInputStream(fis);
-            while (true){
-                Usuario u=(Usuario) ois.readObject();
+            fis = new FileInputStream("src/main/java/gestor/data/usuarios.dat");
+            ois = new ObjectInputStream(fis);
+            while (true) {
+                Usuario u = (Usuario) ois.readObject();
                 listadoUsuarios.add(u);
             }
-        } catch (EOFException e){
+        } catch (EOFException e) {
             System.out.println("Fichero leído");
-        }catch (FileNotFoundException e){
-            e.getMessage();
-        } catch (ClassNotFoundException e){
-            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            System.err.println("Error al encontrar el archivo: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            System.err.println("Error al encontrar el archivo: " + e.getMessage());
         } catch (IOException e) {
-
+            System.err.println("Error al encontrar el archivo: " + e.getMessage());
         } finally {
-            fis.close();
-            ois.close();
+            try {
+                if (fis != null) {
+                    fis.close();
+                }
+                if (ois != null) {
+                    ois.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
+
+
     public void escribirUsuarios() throws IOException {
         try {
-            fos=new FileOutputStream("src/data/usuarios.dat", true);
+            fos=new FileOutputStream("src/main/java/gestor/data/usuarios.dat", true);
             oos=new ObjectOutputStream(fos);
             for (Usuario u:listadoUsuarios){
                 oos.writeObject(u);
@@ -144,6 +158,7 @@ public class GestorEventos {
         String password = sc.nextLine();
 
         for (Usuario usuario : listadoUsuarios) {
+            System.out.println(usuario.getNombre());
             if (usuario.getEmail().equals(email) && usuario.getPassword().equals(password)) {
                 if (usuario instanceof Asistente) {
                     sistemaDeReserva(usuario);
@@ -396,17 +411,17 @@ public class GestorEventos {
         Asistente nuevoAsistente = new Asistente(nombre, apellido, email, password, telf, fechaNacimiento, dni);
         listadoUsuarios.add(nuevoAsistente);
 
-        try {
-            FileWriter fw = new FileWriter("src/main/usuarios.dat", true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(String.valueOf(nuevoAsistente));
-            bw.close();
+        try (FileOutputStream fos = new FileOutputStream("src/main/java/gestor/data/usuarios.dat", true);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            oos.writeObject(nuevoAsistente);
             System.out.println("\nAñadido correctamente");
             System.out.println(nuevoAsistente);
         } catch (IOException ex) {
             System.out.println("Error al añadir contenido al archivo");
+            ex.printStackTrace();
         }
 
         System.out.println("Registro completado con éxito.");
+
     }
 }
