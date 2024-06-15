@@ -1,7 +1,10 @@
 package gestor;
 
 import gestor.clases.*;
+import gestor.excepciones.ContrasenyaNotEqualsException;
+import gestor.excepciones.EmailExistenteException;
 
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -12,6 +15,11 @@ public class GestorEventos {
     private Sala[] listadoSalas;
     private ArrayList<Evento> listadoEventos;
     private ArrayList<Reserva> listadoReservas;
+
+    FileOutputStream fos=null;
+    ObjectOutputStream oos=null;
+    FileInputStream fis=null;
+    ObjectInputStream ois=null;
 
     public GestorEventos() {
         listadoSalas = new Sala[5];
@@ -32,7 +40,7 @@ public class GestorEventos {
                     misButacas.add(new Butaca(pos, identificador, false, true));
                 }
             }
-            listadoSalas[i] = new Sala("Sala nº" + i, 25, misButacas, 100.0);
+            listadoSalas[i] = new Sala("Sala nº" + i, 25, misButacas, 25.0);
         }
 
         Usuario usuario1 = new Asistente("Juan", "Perez", "juan@example.com", "juan123", "123456789", LocalDate.of(1990, 1, 1), "49607120D");
@@ -47,11 +55,83 @@ public class GestorEventos {
         listadoUsuarios.add(admin1);
 
         ArrayList<Asistente> asistentes = new ArrayList<>();
-        Evento evento1 = new Evento("Concierto de Rock", "Banda XYZ", listadoSalas[0], LocalDate.of(2024, 6, 15), LocalTime.of(20, 0), 50.0, "Concierto", 100, asistentes);
-        Evento evento2 = new Evento("Obra de Teatro", "Grupo ABC", listadoSalas[1], LocalDate.of(2024, 6, 20), LocalTime.of(19, 0), 40.0, "Teatro", 80, asistentes);
+        Evento evento1 = new Evento("Evento1", "Pepe", listadoSalas[0], LocalDate.of(2024, 6, 15), LocalTime.of(20, 0), 50.0, "Concierto", 25, asistentes);
+        Evento evento2 = new Evento("Evento2", "Jose", listadoSalas[1], LocalDate.of(2024, 6, 20), LocalTime.of(19, 0), 40.0, "Teatro", 25, asistentes);
 
         listadoEventos.add(evento1);
         listadoEventos.add(evento2);
+    }
+    public void leerUsuarios() throws IOException {
+        try {
+            fis=new FileInputStream("src/data/usuarios.dat");
+            ois=new ObjectInputStream(fis);
+            while (true){
+                Usuario u=(Usuario) ois.readObject();
+                listadoUsuarios.add(u);
+            }
+        } catch (EOFException e){
+            System.out.println("Fichero leído");
+        }catch (FileNotFoundException e){
+            e.getMessage();
+        } catch (ClassNotFoundException e){
+            e.printStackTrace();
+        } catch (IOException e) {
+
+        } finally {
+            fis.close();
+            ois.close();
+        }
+    }
+    public void escribirUsuarios() throws IOException {
+        try {
+            fos=new FileOutputStream("src/data/usuarios.dat", true);
+            oos=new ObjectOutputStream(fos);
+            for (Usuario u:listadoUsuarios){
+                oos.writeObject(u);
+            }
+        } catch (FileNotFoundException e){
+            e.getMessage();
+        }finally {
+            fos.close();
+            oos.flush();
+            oos.close();
+        }
+    }
+    public void leerEventos() throws IOException {
+        try {
+            fis=new FileInputStream("src/data/eventos.dat");
+            ois=new ObjectInputStream(fis);
+            while (true){
+                Evento e=(Evento) ois.readObject();
+                listadoEventos.add(e);
+            }
+        } catch (EOFException e){
+            System.out.println("Fichero leído");
+        }catch (FileNotFoundException e){
+            e.getMessage();
+        } catch (ClassNotFoundException e){
+            e.printStackTrace();
+        } catch (IOException e) {
+
+        } finally {
+            fis.close();
+            ois.close();
+        }
+    }
+    public void escribirEventos() throws IOException {
+        try {
+            fos=new FileOutputStream("src/data/eventos.dat");
+            oos=new ObjectOutputStream(fos);
+            for (Evento e:listadoEventos){
+                oos.writeObject(e);
+            }
+        } catch (FileNotFoundException e){
+            e.getMessage();
+        }finally {
+            fos.close();
+            oos.flush();
+            oos.close();
+        }
     }
 
     public void login() {
@@ -205,32 +285,39 @@ public class GestorEventos {
     public void registro() {
         Scanner sc = new Scanner(System.in);
 
-        String nombre, apellido, email, password, confPassword, telf, dni;
-        LocalDate fechaNacimiento;
+        String nombre, apellido, email="", password, confPassword, telf, dni, fechaNacimientoString;
+        LocalDate fechaNacimiento = null;
         boolean salir = false;
 
         System.out.println("REGISTRO ASISTENTES");
 
         // Pedir email, validar y comprobar si esta en uso
-        while (true) {
+        while (!salir) {
             System.out.println("Introduzca su email:");
             email = sc.nextLine();
-            if (Validaciones.validarGmail(email)) {
-                System.out.println("El gmail introducido es correcto.\n");
-                break;
-            } else {
-                System.err.println("El gmail no es correcto, por favor, introdúzcalo de nuevo:");
+            try {
+                if (Validaciones.validarGmail(email)) {
+                    boolean emailUsado = false;
+                    for (Usuario u : listadoUsuarios) {
+                        if (email.equals(u.getEmail())) {
+                            emailUsado = true;
+                            break;
+                        }
+                    }
+
+                    if (emailUsado == true) {
+                        throw new EmailExistenteException();
+                    } else {
+                        System.out.println("El correo electrónico introducido esta disponible.\n");
+                        salir = true;
+                    }
+                } else {
+                    System.err.println("El correo electrónico no es valido, por favor, introdúzcalo de nuevo:");
+                }
+            } catch (EmailExistenteException e) {
+                System.err.println(e.getMessage());
             }
         }
-
-        for (Usuario u : listadoUsuarios) {
-            if (email.equals(u.getEmail())) {
-                System.err.println("Correo electronico en uso, elija otro.");
-                salir = true;
-                break;
-            }
-        }
-
 
         // pedir nombre
         while (true) {
@@ -258,19 +345,68 @@ public class GestorEventos {
 
         // pedir contraseña y pedir confirmacion (compara)
         while (true) {
-            System.out.println("Introduzca su contraseña:");
-            password = sc.nextLine();
+            try {
+                System.out.println("Introduzca su contraseña:");
+                password = sc.nextLine();
 
-            System.out.println("Confirmar contraseña:");
-            confPassword = sc.nextLine();
+                System.out.println("Confirmar contraseña:");
+                confPassword = sc.nextLine();
 
-            if (confPassword.equals(password)) {
+                if (!(confPassword.equals(password))) {
+                    throw new ContrasenyaNotEqualsException();
+                }else {
+                    System.out.println("Contraseñas coincidentes.");
+                }
                 break;
-            } else {
-                System.out.println("Las contraseñas no coinciden. Intentelo de nuevo...");
+            } catch (ContrasenyaNotEqualsException e) {
+                System.out.println(e.getMessage());
             }
         }
 
+        //pedir telefono y validarlo
+        while (true) {
+            System.out.println("Introduzca su número de teléfono (Formato 111 111 111): ");
+            telf = sc.nextLine();
+            if (Validaciones.validarNumeroTelefono(telf)) {
+                System.out.println("El número introducido es correcto.\n");
+                break;
+            } else {
+                System.err.println("El número no es correcto, por favor, introdúzcalo de nuevo:");
+            }
+        }
 
+        //pedir fecha de nacimiento en string y pasarlo con parse
+        while (fechaNacimiento == null) {
+            System.out.println("Introduzca su fecha de nacimiento (aaaa-MM-dd):");
+            fechaNacimientoString = sc.nextLine();
+            fechaNacimiento = Validaciones.validarFecha(fechaNacimientoString);
+        }
+
+        //pedir un dni y validarlo
+        while (true) {
+            System.out.println("Por favor, introduzca el DNI del titular (en caso de NIE, sustituir de la siguiente manera: X=0 Y=1 Z=2):");
+            dni = sc.nextLine();
+            if (Validaciones.validarDNI(dni)) {
+                System.out.println("El DNI introducido es correcto.\n");
+                break;
+            } else {
+                System.err.println("El DNI no es correcto, por favor, introdúzcalo de nuevo:");
+            }
+        }
+        Asistente nuevoAsistente = new Asistente(nombre, apellido, email, password, telf, fechaNacimiento, dni);
+        listadoUsuarios.add(nuevoAsistente);
+
+        try {
+            FileWriter fw = new FileWriter("src/main/usuarios.dat", true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(String.valueOf(nuevoAsistente));
+            bw.close();
+            System.out.println("\nAñadido correctamente");
+            System.out.println(nuevoAsistente);
+        } catch (IOException ex) {
+            System.out.println("Error al añadir contenido al archivo");
+        }
+
+        System.out.println("Registro completado con éxito.");
     }
 }

@@ -148,6 +148,8 @@ public class Gestor {
             }
         }
 
+
+
         while (true) {
             System.out.println("Introduzca sus apellidos: ");
             apellidos = sc.nextLine();

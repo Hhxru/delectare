@@ -1,9 +1,10 @@
 package gestor.clases;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class Reserva {
+public class Reserva implements Serializable {
     String id;
     Asistente asistente;
     Evento evento;

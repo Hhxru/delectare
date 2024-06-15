@@ -1,6 +1,8 @@
 package gestor.clases;
 
-public class Butaca {
+import java.io.Serializable;
+
+public class Butaca implements Serializable {
     String pos;
     int id;
     boolean accesibilidad;

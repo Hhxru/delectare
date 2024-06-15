@@ -1,8 +1,9 @@
 package gestor.clases;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Sala {
+public class Sala implements Serializable {
     String nombre;
     int capacidad;
     ArrayList<Butaca> lista_butacas = new ArrayList<>();
